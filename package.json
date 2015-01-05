@@ -1,24 +1,24 @@
 {
-  "name": "gleaner",
+  "name": "scrapit",
   "version": "0.0.1",
-  "description": "A simple utility allowing to replay captured HTTP responses",
+  "description": "Allows to scrape API calls (HTTP), modify captured responses and replay them.",
   "author": "Tomas Zezula <zezulatomas@gmail.com>",
   "contributors": [
     "Tomas Zezula <zezulatomas@gmail.com>"
   ],
   "bin": {
-    "gleaner": "node ./bin/gleaner"
+    "scrapit": "node ./bin/scrapit"
   },
   "scripts": {
-    "start": "node ./bin/gleaner",
+    "start": "node ./bin/scrapit",
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zezutom/gleaner"
+    "url": "https://github.com/zezutom/scrapit"
   },
   "bugs": {
-    "url": "https://github.com/zezutom/gleaner/issues"
+    "url": "https://github.com/zezutom/scrapit/issues"
   },
   "keywords": [
     "mock",
@@ -26,7 +26,9 @@
     "http proxy",
     "api",
     "scrape",
-    "scraping"
+    "scraping",
+    "api mock",
+    "api mock server"
   ],
   "dependencies": {
     "body-parser": "~1.0.0",
@@ -54,7 +56,7 @@
   },
   "analyze": true,
   "license": "MIT",
-  "homepage": "https://github.com/zezutom/gleaner",
+  "homepage": "https://github.com/zezutom/scrapit",
   "main": "app.js",
   "directories": {
     "test": "test"
