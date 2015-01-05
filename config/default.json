@@ -1,0 +1,20 @@
+{
+	"Server": {
+   		"host": "localhost",
+      	"port": 8088
+    },    
+    "Mappings": {
+    	"wiki": {
+    		"dir": "data/wiki",
+    		"host": "http://en.wikipedia.org",
+            "skipHeaders": true
+    	},
+        "md5":{
+         "dir":"data/md5",
+         "host":"http://md5.jsontest.com",
+         "skipHeaders":true
+      }
+    },
+    "Timeout": 3000
+}   //,"DocRoot": '/var/apimock/www'    // optional - absolute path to the doc root, defaults to app installation directory
+                                        // if specified all 'dir' entries are relative to it

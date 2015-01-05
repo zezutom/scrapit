@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+var debug = require('debug')('gleaner');
+var server = require('config').Server;
+var app = require('../app');
+
+var port = server.port, host = server.host;
+console.log("Starting server: [http://%s:%s]", host, port);
+app.listen(port, host);
