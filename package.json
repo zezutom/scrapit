@@ -7,10 +7,10 @@
     "Tomas Zezula <zezulatomas@gmail.com>"
   ],
   "bin": {
-    "scrapit": "node ./bin/scrapit"
+    "scrapit": "bin/scrapit"
   },
   "scripts": {
-    "start": "node ./bin/scrapit",
+    "start": "bin/scrapit",
     "test": "mocha"
   },
   "repository": {
