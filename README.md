@@ -1,4 +1,5 @@
 # scrapit
+[![Build Status](https://travis-ci.org/zezutom/scrapit.svg?branch=master)](https://travis-ci.org/zezutom/scrapit)
 
 Scrapit intercepts HTTP requests and replays captured responses. Its main purpose is to support test automation and daily development work by removing depedencies on 3rd party APIs - typically, but not only, based on JSON or XML.
 
@@ -39,28 +40,28 @@ chmod +x ./bin/scrapit
 ./bin/scrapit
 ```
 ## Quick Start
-Let's assume your app makes use of the [MediaWiki API](http://www.mediawiki.org/wiki/API:Main_page). There is a lot of cool stuff you can do with that API. For instance, you can get a complete HTML output of a specific wiki page, such as the one giving an in-depth explanation on what [gleaning](http://en.wikipedia.org/w/index.php?action=render&title=gleaning) means.
+Let's assume your app makes use of the [MediaWiki API](http://www.mediawiki.org/wiki/API:Main_page). There is a lot of cool stuff you can do with that API. For instance, you can get a complete HTML output of a specific wiki page, such as the one giving an in-depth explanation on what [web scraping](http://en.wikipedia.org/w/index.php?action=render&title=web%20scraping) means.
 
 However, for clarity we will only deal with small chunks of data, see the examples below.
 
-*__Example 1:__ A brief summary of the page about gleaning, as JSON*
+*__Example 1:__ A brief summary of the page about web scraping, as JSON*
 ```
-http://en.wikipedia.org/w/api.php?action=query&format=json&continue=&titles=gleaning
+http://en.wikipedia.org/w/api.php?action=query&format=json&continue=&titles=web%20scraping
 
 {
    "batchcomplete":"",
    "query":{
       "normalized":[
          {
-            "from":"gleaning",
-            "to":"Gleaning"
+            "from":"web scraping",
+            "to":"Web scraping"
          }
       ],
       "pages":{
-         "433129":{
-            "pageid":433129,
+         "2696619":{
+            "pageid":2696619,
             "ns":0,
-            "title":"Gleaning"
+            "title":"Web scraping"
          }
       }
    }
@@ -69,16 +70,16 @@ http://en.wikipedia.org/w/api.php?action=query&format=json&continue=&titles=glea
 
 *__Example 2:__ An identical inquiry, but the requested format is XML*
 ```
-http://en.wikipedia.org/w/api.php?action=query&format=xml&continue=&titles=gleaning
+http://en.wikipedia.org/w/api.php?action=query&format=xml&continue=&titles=web%20scraping
 
 <?xml version="1.0" encoding="UTF-8"?>
 <api batchcomplete="">
    <query>
       <normalized>
-         <n from="gleaning" to="Gleaning" />
+         <n from="web scraping" to="Web scraping" />
       </normalized>
       <pages>
-         <page pageid="433129" ns="0" title="Gleaning" />
+         <page pageid="2696619" ns="0" title="Web scraping" />
       </pages>
    </query>
 </api>
@@ -106,8 +107,8 @@ Once the config changes are saved and the server is started `npm start` or `./bi
 
 Okay, so let's see what happens now. API calls are obviously mediated via the localhost. The very first time Scrapit won't have any data, so it makes a roundtrip to wikipedia and captures the returned responses. These two calls yield therefore the same results as before:
 ```
-http://localhost:8088/wiki/w/api.php?action=query&format=json&continue=&titles=gleaning
-http://localhost:8088/wiki/w/api.php?action=query&format=xml&continue=&titles=gleaning
+http://localhost:8088/wiki/w/api.php?action=query&format=json&continue=&titles=web%20scraping
+http://localhost:8088/wiki/w/api.php?action=query&format=xml&continue=&titles=web%20scraping
 ```
 Once the calls are made, the captured responses can be accessed as follows:
 ```
@@ -116,14 +117,14 @@ tree data
 data
 └── wiki
     └── GET
-        ├── w__api.php--action=query&format=json&continue=&titles=gleaning.mock
-        └── w__api.php--action=query&format=xml&continue=&titles=gleaning.mock
+        ├── w__api.php--action=query&format=json&continue=&titles=web%20scraping.mock
+        └── w__api.php--action=query&format=xml&continue=&titles=web%20scraping.mock
 ```
 As you can see, both API calls were intercepted and their responses resolved into files. From this point on, any subsequent API calls will not incur additional roundtrips. Scrapit will return locally stored responses. On top of that, you are good to modify the captured data as you wish. There is absolutely no need to restart the server once modifications are made.
 
 Turns out there is a structure (JSON) to the captured content:
 ```
-cat "data/wiki/GET/w__api.php--action=query&format=xml&continue=&titles=gleaning.mock"
+cat "data/wiki/GET/w__api.php--action=query&format=json&continue=&titles=web%20scraping.mock"
 
 // Formatted output (the content is actually minified)
 
@@ -136,20 +137,20 @@ cat "data/wiki/GET/w__api.php--action=query&format=xml&continue=&titles=gleaning
       "x-content-type-options":"nosniff",
       "x-frame-options":"SAMEORIGIN",
       "vary":"Accept-Encoding,X-Forwarded-Proto,Cookie",
-      "content-type":"text/xml; charset=utf-8",
-      "x-varnish":"653213942, 1820936746, 3220440539",
+      "content-type":"application/json; charset=utf-8",
+      "x-varnish":"252843972, 2025257333, 4099851608",
       "via":"1.1 varnish, 1.1 varnish, 1.1 varnish",
       "transfer-encoding":"chunked",
-      "date":"Sat, 03 Jan 2015 14:10:53 GMT",
+      "date":"Mon, 05 Jan 2015 13:15:17 GMT",
       "age":"0",
       "connection":"keep-alive",
-      "x-cache":"cp1053 miss (0), amssq55 miss (0), amssq46 frontend miss (0)",
+      "x-cache":"cp1065 miss (0), amssq56 miss (0), amssq31 frontend miss (0)",
       "x-analytics":"php=hhvm",
       "set-cookie":[
          "GeoIP=SE:Esl_v:55.8333:13.3333:v4; Path=/; Domain=.wikipedia.org"
       ]
    },
-   "body":"<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><normalized><n from=\"mockingbird\" to=\"Mockingbird\" /></normalized><pages><page pageid=\"219378\" ns=\"0\" title=\"Mockingbird\" /></pages></query></api>"
+   "body":"{\"batchcomplete\":\"\",\"query\":{\"normalized\":[{\"from\":\"web scraping\",\"to\":\"Web scraping\"}],\"pages\":{\"2696619\":{\"pageid\":2696619,\"ns\":0,\"title\":\"Web scraping\"}}}}"
 }
 ```
 To guarantee an authentic replay, Scrapit stores not only the response data represented by the `body` entry, but it also preserves the response code as well as all of the response headers.
@@ -158,7 +159,7 @@ Suppose you want to simulate that the respective API call returns a specific sta
 ```
 // Change the saved file
 
-cat "data/wiki/GET/w__api.php--action=query&format=xml&continue=&titles=gleaning.mock"
+cat "data/wiki/GET/w__api.php--action=query&format=json&continue=&titles=web%20scraping.mock"
 ..
 "code": 201
 ..
@@ -166,7 +167,7 @@ cat "data/wiki/GET/w__api.php--action=query&format=xml&continue=&titles=gleaning
 // Scrapit's response after the change is saved
 
 Remote Address:127.0.0.1:8088
-Request URL:http://localhost:8088/wiki/w/api.php?action=query&format=xml&continue=&titles=gleaner
+Request URL:http://localhost:8088/wiki/w/api.php?action=query&format=json&continue=&titles=web%20scraping
 Request Method:GET
 Status Code:201 Created
 ```
@@ -183,8 +184,8 @@ data
                     └── user-agent__Mozilla__5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit__537.36 (KHTML, like Gecko) Chrome__39.0.2171.95 Safari__537.36
                         └── accept-encoding__gzip, deflate, sdch
                             └── accept-language__en,en-US;q=0.8,sv;q=0.6
-                                ├── w__api.php--action=query&format=json&continue=&titles=gleaning.mock
-                                └── w__api.php--action=query&format=xml&continue=&titles=gleaning.mock
+                                ├── w__api.php--action=query&format=json&continue=&titles=web%20scraping.mock
+                                └── w__api.php--action=query&format=xml&continue=&titles=web%20scraping.mock
 ```
 
 That's for the introduction, hope you found it useful. The remaining sections provide examples of the supported HTTP methods and other details.
