@@ -1,7 +1,6 @@
-# gleaner
-[![Build Status](https://travis-ci.org/zezutom/mockingbird.svg?branch=master)](https://travis-ci.org/zezutom/mockingbird)
+# scrapit
 
-Gleaner intercepts HTTP requests and replays captured responses. Its main purpose is to support test automation and daily development work by removing depedencies on 3rd party APIs - typically, but not only, based on JSON or XML.
+Scrapit intercepts HTTP requests and replays captured responses. Its main purpose is to support test automation and daily development work by removing depedencies on 3rd party APIs - typically, but not only, based on JSON or XML.
 
 There is no GUI to this tool. However, the captured responses are stored as plain text files, which makes them easy to access and manipulate. 
 
@@ -27,8 +26,8 @@ There is no GUI to this tool. However, the captured responses are stored as plai
 
 ## Installation
 ```
-git clone git@github.com:zezutom/gleaner.git
-cd gleaner && npm install
+git clone git@github.com:zezutom/scrapit.git
+cd scrapit && npm install
 ```
 To run the tool with default settings:
 ```
@@ -36,8 +35,8 @@ npm start
 ```
 You can also run it directly from [CLI](http://en.wikipedia.org/wiki/Command-line_interface):
 ```
-chmod +x ./bin/gleaner
-./bin/gleaner
+chmod +x ./bin/scrapit
+./bin/scrapit
 ```
 ## Quick Start
 Let's assume your app makes use of the [MediaWiki API](http://www.mediawiki.org/wiki/API:Main_page). There is a lot of cool stuff you can do with that API. For instance, you can get a complete HTML output of a specific wiki page, such as the one giving an in-depth explanation on what [gleaning](http://en.wikipedia.org/w/index.php?action=render&title=gleaning) means.
@@ -84,7 +83,7 @@ http://en.wikipedia.org/w/api.php?action=query&format=xml&continue=&titles=glean
    </query>
 </api>
 ```
-Now, to break the direct dependency on wikipedia's API content and availability, adjust gleaner's configuration `config/default.json` as follows:
+Now, to break the direct dependency on wikipedia's API content and availability, adjust Scrapit's configuration `config/default.json` as follows:
 ```
 {
    "Server":{
@@ -103,9 +102,9 @@ Now, to break the direct dependency on wikipedia's API content and availability,
 ```
 I hope the entries are self-explanatory. In short, the server will be accessible at `http://localhost:8088` and to connect to the wikipedia you use `http://localhost:8088/wiki` as a base url for any API requests. For simplicity, request headers will not be considered when caching the data. The captured responses will be stored at `data/wiki`. The directory doesn't exist just yet, but that's nothing you need to worry about. 
 
-Once the config changes are saved and the server is started `npm start` or `./bin/gleaner`, you are good to go. 
+Once the config changes are saved and the server is started `npm start` or `./bin/scrapit`, you are good to go. 
 
-Okay, so let's see what happens now. API calls are obviously mediated via the localhost. The very first time gleaner won't have any data, so it makes a roundtrip to wikipedia and captures the returned responses. These two calls yield therefore the same results as before:
+Okay, so let's see what happens now. API calls are obviously mediated via the localhost. The very first time Scrapit won't have any data, so it makes a roundtrip to wikipedia and captures the returned responses. These two calls yield therefore the same results as before:
 ```
 http://localhost:8088/wiki/w/api.php?action=query&format=json&continue=&titles=gleaning
 http://localhost:8088/wiki/w/api.php?action=query&format=xml&continue=&titles=gleaning
@@ -120,7 +119,7 @@ data
         ├── w__api.php--action=query&format=json&continue=&titles=gleaning.mock
         └── w__api.php--action=query&format=xml&continue=&titles=gleaning.mock
 ```
-As you can see, both API calls were intercepted and their responses resolved into files. From this point on, any subsequent API calls will not incur additional roundtrips. Gleaner will return locally stored responses. On top of that, you are good to modify the captured data as you wish. There is absolutely no need to restart the server once modifications are made.
+As you can see, both API calls were intercepted and their responses resolved into files. From this point on, any subsequent API calls will not incur additional roundtrips. Scrapit will return locally stored responses. On top of that, you are good to modify the captured data as you wish. There is absolutely no need to restart the server once modifications are made.
 
 Turns out there is a structure (JSON) to the captured content:
 ```
@@ -153,7 +152,7 @@ cat "data/wiki/GET/w__api.php--action=query&format=xml&continue=&titles=gleaning
    "body":"<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><normalized><n from=\"mockingbird\" to=\"Mockingbird\" /></normalized><pages><page pageid=\"219378\" ns=\"0\" title=\"Mockingbird\" /></pages></query></api>"
 }
 ```
-To guarantee an authentic replay, gleaner stores not only the response data represented by the `body` entry, but it also preserves the response code as well as all of the response headers.
+To guarantee an authentic replay, Scrapit stores not only the response data represented by the `body` entry, but it also preserves the response code as well as all of the response headers.
 
 Suppose you want to simulate that the respective API call returns a specific status code, let's say 201 instead of 200. In this case you simply modify the `code` entry in the relevant file and resubmit the API call:
 ```
@@ -164,7 +163,7 @@ cat "data/wiki/GET/w__api.php--action=query&format=xml&continue=&titles=gleaning
 "code": 201
 ..
 
-// Gleaner's response after the change is saved
+// Scrapit's response after the change is saved
 
 Remote Address:127.0.0.1:8088
 Request URL:http://localhost:8088/wiki/w/api.php?action=query&format=xml&continue=&titles=gleaner
@@ -519,7 +518,7 @@ An example of a complete configuration file
 ```
 
 ## Server
-Mandatory, specifies host and port on which gleaner will run.
+Mandatory, specifies host and port on which Scrapit will run.
 
 ## Mappings
 Mandatory, it must contain at least one API specification.
@@ -537,9 +536,9 @@ Example
 
 `dir` and `host` are mandatory.
 
-`dir` defines a relative path to the directory the mocked responses will go to. The default root is `$gleaner_install_dir/data`. In fact, this is the only option at the moment. I plan to add another configuration element (`docRoot`) allowing to set any path in the filesystem.
+`dir` defines a relative path to the directory the mocked responses will go to. The default root is `$scrapit_install_dir/data`. In fact, this is the only option at the moment. I plan to add another configuration element (`docRoot`) allowing to set any path in the filesystem.
 
-`host` gives hostname / IP address of the API gleaner should connect to. It works in tandem with the api key. Given the example above, this call `http://localhost:8088/wiki` would initiate a call to `http://en.wikipedia.org` under the hood.
+`host` gives hostname / IP address of the API Scrapit should connect to. It works in tandem with the api key. Given the example above, this call `http://localhost:8088/wiki` would initiate a call to `http://en.wikipedia.org` under the hood.
 
 `skipHeaders` is optional and disabled by default. This option provides a means of how to skip request headers when persisting the captured responses. I might consider replacing this setting with a different option, which would allow to list the headers you are interested in (`reqHeaders: ["header-x", "header-y", ..]`). 
 
