@@ -1,6 +1,6 @@
 {
   "name": "scrapit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Allows to scrape API calls (HTTP), modify captured responses and replay them.",
   "author": "Tomas Zezula <zezulatomas@gmail.com>",
   "contributors": [
