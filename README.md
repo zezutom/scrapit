@@ -26,6 +26,17 @@ There is no GUI to this tool. However, the captured responses are stored as plai
 - [Configuration](#configuration)
 
 ## Installation
+### Via npm
+```
+npm install scrapit
+```
+Before you can run the server you need to set the $NODE_CONFIG_DIR variable in order to specify the location of your [configuration directory](https://github.com/zezutom/scrapit/tree/master/config). For example:
+```
+export NODE_CONFIG_DIR=~/workspace/scrapit/config
+```
+Finally, you start server by running `scrapit`
+
+### Using Sources
 ```
 git clone git@github.com:zezutom/scrapit.git
 cd scrapit && npm install
