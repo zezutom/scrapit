@@ -1,4 +1,5 @@
 # scrapit
+[![NPM](https://nodei.co/npm/scrapit.png)](https://nodei.co/npm/scrapit/)
 [![Build Status](https://travis-ci.org/zezutom/scrapit.svg?branch=master)](https://travis-ci.org/zezutom/scrapit)
 
 Scrapit intercepts HTTP requests and replays captured responses. Its main purpose is to support test automation and daily development work by removing depedencies on 3rd party APIs - typically, but not only, based on JSON or XML.
