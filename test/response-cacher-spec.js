@@ -1,7 +1,6 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
-var httpMocks = require('node-mocks-http');
 var rimraf = require('rimraf');
 var testUtils = require('./test-utils')();
 var cacher = require('../modules/response-cacher')();
@@ -143,13 +142,7 @@ describe('response-cacher', function() {
 	});
     
     describe('#set()', function() {
-        
-        var callback = function(conf, err, req, body, done) {
-            if (err) throw err;
-            assert.equal(body, cacher.get(conf, req)); 
-            done();
-        };
-        
+
         var test = function(url, done, options) {
             
             var apiKey = 'response-cacher-temp';
@@ -163,10 +156,16 @@ describe('response-cacher', function() {
             };
             
             var conf = testUtils.conf(apiKey, mappings[apiKey]);
-            
-            cacher.set(conf, req, data, function(err) {
-                callback(conf, err, req, JSON.stringify(data), done);
-            });        
+
+            cacher.set(conf, req, data).then(
+                function() {
+                    assert.equal(JSON.stringify(data), cacher.get(conf, req));
+                    done();
+                },
+                function(err) {
+                    throw err;
+                }
+            );
         };
                 
         after(function(done) {
@@ -269,17 +268,15 @@ describe('response-cacher', function() {
                 headers: {'content-type':'application/json'}, 
                 body: {'msg':'hello world'}                    
             };
-            
-            var callback = function(err, req, body, done) {
-                if (err) throw err;
-                assert.equal(body, readMock(mapping.dir, 'hello')); 
-                done();
-            };   
-                        
-            cacher.set(testUtils.conf(apiKey, mapping), req, data, function(err) {
-                callback(err, req, JSON.stringify(data), done);
-            });
-            
+
+            cacher.set(testUtils.conf(apiKey, mapping), req, data)
+                .then(
+                    function() {
+                        assert.equal(JSON.stringify(data), readMock(mapping.dir, 'hello'));
+                        done();
+                    },
+                    function(err) { throw err; }
+                );
         });    
     });
 });

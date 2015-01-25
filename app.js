@@ -33,21 +33,18 @@ app.get('/', function(req, res) {
   res.render('index', { title: 'API Mock Server' });
 });
 
-// API calls are delegated to the mock server
-
-var callback = function(req, res) {
-    proxy.execute(req, res);    
-};
+// Proxied http methods
+var supportedMethods = ['get', 'post', 'put', 'delete'];
 
 for (var key in mappings) {
 	var mappedUrl = '/' + key + '*';
-	app.get(mappedUrl, callback);
 
-	app.post(mappedUrl, callback);
-
-	app.put(mappedUrl, callback);
-
-	app.delete(mappedUrl, callback);
+    // API calls are delegated to the mock server
+    supportedMethods.forEach(function(method) {
+        app[method](mappedUrl, function(req, res) {
+            proxy.execute(req, res);
+        });
+    });
 }
 
 module.exports = app;

@@ -1,22 +1,28 @@
 var fs = require('fs');
 var filendir = require('filendir')
 var appUtils = require('./app-utils')();
+var Q = require('q');
 
 module.exports = function() {
     
 	return {
         _docRoot: undefined,
         
-		init: function(docRoot, mappings) {
+		init: function(docRoot) {
 			this._docRoot = appUtils.getAbsPath(docRoot);
 		},
 		get: function(conf, req) {            
 			return this._readMock(this._resolveMockPath(conf, req));	
 		},
-		set: function(conf, req, options, callback) {  
+		set: function(conf, req, options) {
             if (!options) throw new Error("Invalid argument: options must be provided!");
-			var mockPath = this._resolveMockPath(conf, req);
-            filendir.wa(mockPath, JSON.stringify(options), callback);
+            var deferred = Q.defer(),
+                mockPath = this._resolveMockPath(conf, req);
+            filendir.wa(mockPath, JSON.stringify(options), function(err) {
+                if (err) deferred.reject(err);
+                else deferred.resolve();
+            });
+            return deferred.promise;
 		},
         _resolveMockPath: function(conf, req) {
 			            

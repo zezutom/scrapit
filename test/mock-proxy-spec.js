@@ -25,23 +25,7 @@ cacher.init(docRoot, mappings);
 describe('mock-proxy', function() {
 
     describe('#execute()', function() {
-        
-        var callback = function(conf, err, req, res, done) {            
-            if (err) throw err;
-            var data = JSON.parse(cacher.get(conf, req));
-            
-            // verify content type and data
-            assert.equal(res.statusCode, data.code);            
-            assert.equal(res._getData(), data.body); 
-            
-            // check headers
-            var resHeaders = JSON.stringify(res._getHeaders());
-            var dataHeaders = JSON.stringify(data.headers);
-            assert.equal(resHeaders, dataHeaders);            
-                        
-            done();
-        };
-        
+
         var test = function(url, done, options) {
             _test(false, url, done, options);
         };
@@ -68,11 +52,26 @@ describe('mock-proxy', function() {
                 .put(url)
                 .reply(200, body)
                 .delete(url)
-                .reply(200, body);            
-                        
-            proxy.execute(req, res, function(err) {              
-                callback(testUtils.conf(apiKey, mapping), err, req, res, done);
-            });                    
+                .reply(200, body);
+
+            proxy.execute(req, res).then(
+                function() {
+                    var conf = testUtils.conf(apiKey, mapping),
+                        data = JSON.parse(cacher.get(conf, req));
+
+                    // verify content type and data
+                    assert.equal(res.statusCode, data.code);
+                    assert.equal(res._getData(), data.body);
+
+                    // check headers
+                    var resHeaders = JSON.stringify(res._getHeaders());
+                    var dataHeaders = JSON.stringify(data.headers);
+                    assert.equal(resHeaders, dataHeaders);
+
+                    done();
+                },
+                function(err) { throw err; }
+            );
         };
         
         after(function(done) {
